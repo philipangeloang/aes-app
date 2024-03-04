@@ -19,7 +19,6 @@ import { GET_SECRETS } from "@/graphql/queries";
 const Hero = () => {
   const { data } = useQuery(GET_SECRETS);
 
-  console.log(data?.secrets[0].secret);
   return (
     <section className="bg-white dark:bg-gray-900 pt-20 h-screen">
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto gap-8 lg:py-16 lg:grid-cols-12">

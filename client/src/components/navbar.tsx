@@ -10,8 +10,23 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { ADD_SECRET } from "@/graphql/mutations";
 
 const Navbar = () => {
+
+  const [secret, setSecret] = useState('')
+  const [password, setPassword] = useState('')
+
+  const [addSecret] = useMutation(ADD_SECRET, {
+    variables: {secret, password}
+  })
+
+  function handleSubmit(e) {
+    e.preventDefault();
+  }
+
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 absolute w-full">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -40,13 +55,17 @@ const Navbar = () => {
                   <Label htmlFor="name" className="text-right">
                     Secret
                   </Label>
-                  <Input id="secret" className="col-span-3" />
+                  <Input id="secret" className="col-span-3" onChange={(e) => {
+                    setSecret(e.target.value)
+                  }} />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="username" className="text-right">
                     Password
                   </Label>
-                  <Input id="password" type="password" className="col-span-3" />
+                  <Input id="password" type="password" className="col-span-3" onChange={(e) => {
+                    setPassword(e.target.value)
+                  }} />
                 </div>
               </div>
               <DialogFooter>

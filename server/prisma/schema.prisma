@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Secret {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  secret String
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  secret   String
   password String
 }
