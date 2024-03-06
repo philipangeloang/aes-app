@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useToast } from "@/components/ui/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -13,18 +15,36 @@ import { Label } from "./ui/label";
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { ADD_SECRET } from "@/graphql/mutations";
+import { GET_SECRETS } from "@/graphql/queries";
+import { Toaster } from "./ui/toaster";
 
 const Navbar = () => {
+  const { toast } = useToast();
+  const [secret, setSecret] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [secret, setSecret] = useState('')
-  const [password, setPassword] = useState('')
+  const [addSecret] = useMutation(ADD_SECRET);
 
-  const [addSecret] = useMutation(ADD_SECRET, {
-    variables: {secret, password}
-  })
+  function handleSubmit() {
+    if (secret === "" || password === "") {
+      return toast({
+        title: "Cannot be Empty",
+        description: "Please fill up the empty fields",
+        duration: 3000,
+      });
+    }
+    addSecret({
+      variables: {
+        secret: {
+          secret: secret,
+          password: password,
+        },
+      },
+      refetchQueries: [{ query: GET_SECRETS }],
+    });
 
-  function handleSubmit(e) {
-    e.preventDefault();
+    setSecret("");
+    setPassword("");
   }
 
   return (
@@ -40,6 +60,7 @@ const Navbar = () => {
             HAES
           </span>
         </a>
+        <Toaster />
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
           <Dialog>
             <DialogTrigger asChild>
@@ -55,21 +76,37 @@ const Navbar = () => {
                   <Label htmlFor="name" className="text-right">
                     Secret
                   </Label>
-                  <Input id="secret" className="col-span-3" onChange={(e) => {
-                    setSecret(e.target.value)
-                  }} />
+                  <Input
+                    id="secret"
+                    className="col-span-3"
+                    defaultValue={""}
+                    value={secret}
+                    onChange={(e) => {
+                      setSecret(e.target.value);
+                    }}
+                  />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="username" className="text-right">
                     Password
                   </Label>
-                  <Input id="password" type="password" className="col-span-3" onChange={(e) => {
-                    setPassword(e.target.value)
-                  }} />
+                  <Input
+                    id="password"
+                    type="password"
+                    defaultValue={""}
+                    value={password}
+                    className="col-span-3"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                  />
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit" className="bg-blue-700 hover:bg-blue-800">
+                <Button
+                  onClick={handleSubmit}
+                  className="bg-blue-700 hover:bg-blue-800"
+                >
                   Save changes
                 </Button>
               </DialogFooter>
