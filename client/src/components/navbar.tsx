@@ -41,6 +41,15 @@ const Navbar = () => {
         },
       },
       refetchQueries: [{ query: GET_SECRETS }],
+      onCompleted(data) {
+        if (data) {
+          return toast({
+            title: "Added",
+            description: "Successfully added an instance",
+            duration: 3000,
+          });
+        }
+      },
     });
 
     setSecret("");

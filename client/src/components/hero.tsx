@@ -16,18 +16,46 @@ import { Input } from "./ui/input";
 
 import { GET_SECRETS } from "@/graphql/queries";
 import { DELETE_SECRET } from "@/graphql/mutations";
+import { toast } from "./ui/use-toast";
+import { Toaster } from "./ui/toaster";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 import { useState } from "react";
 
 const Hero = () => {
+  const [pass, setPass] = useState("");
   const { data } = useQuery(GET_SECRETS);
 
+  console.log(pass);
   const [deleteSecret] = useMutation(DELETE_SECRET);
 
   function handleDelete(id: any) {
     deleteSecret({
       variables: { id: id },
       refetchQueries: [{ query: GET_SECRETS }],
+      onCompleted(data) {
+        if (data) {
+          return toast({
+            title: "Deleted",
+            description: "Successfully deleted instance",
+            duration: 3000,
+          });
+        }
+      },
     });
+  }
+
+  function handleOpen(id: any) {
+    console.log(id);
   }
 
   return (
@@ -42,7 +70,12 @@ const Hero = () => {
               <div className="flex gap-5">
                 <Drawer>
                   <DrawerTrigger>
-                    <Button className="bg-blue-700 hover:bg-blue-800">
+                    <Button
+                      onClick={() => {
+                        handleOpen(item.id);
+                      }}
+                      className="bg-blue-700 hover:bg-blue-800"
+                    >
                       Open Secret
                     </Button>
                   </DrawerTrigger>
@@ -55,31 +88,91 @@ const Hero = () => {
                         </DrawerDescription>
                       </DrawerHeader>
                       <div className="p-4 pb-0">
-                        <Input placeholder="password" type="password" />
+                        <Input
+                          onChange={(e) => {
+                            setPass(e.target.value);
+                            console.log(item);
+                          }}
+                          placeholder="password"
+                          type="password"
+                        />
                       </div>
                       <DrawerFooter>
-                        <Button className="bg-blue-700 hover:bg-blue-800">
-                          Reveal
-                        </Button>
+                        {item.password === pass ? (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button className="bg-blue-700 hover:bg-blue-800">
+                                Reveal
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="text-center">
+                                  {item.secret}
+                                </AlertDialogTitle>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogAction className="bg-blue-700 hover:bg-blue-800">
+                                  Continue
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        ) : (
+                          <Button
+                            className="bg-blue-700 hover:bg-blue-800"
+                            onClick={() => {
+                              toast({
+                                title: "Incorrect Password",
+                                description:
+                                  "Please input the correct password to reveal the secret",
+                                duration: 3000,
+                              });
+                            }}
+                          >
+                            Reveal
+                          </Button>
+                        )}
                       </DrawerFooter>
                     </div>
                   </DrawerContent>
                 </Drawer>
-                <div>
-                  <Button
-                    onClick={() => {
-                      handleDelete(item.id);
-                    }}
-                    className="bg-red-700 hover:bg-red-800"
-                  >
-                    Delete Secret
-                  </Button>
-                </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button className="bg-red-700 hover:bg-red-800">
+                      Delete Secret
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your secret and remove your data from our
+                        servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-red-700 hover:bg-red-800"
+                        onClick={() => {
+                          handleDelete(item.id);
+                        }}
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </CardFooter>
           </Card>
         ))}
       </div>
+      <Toaster />
     </section>
   );
 };

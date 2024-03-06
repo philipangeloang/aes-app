@@ -5,6 +5,7 @@ export const GET_SECRETS = gql`
     secrets {
       id
       secret
+      password
     }
   }
 `;

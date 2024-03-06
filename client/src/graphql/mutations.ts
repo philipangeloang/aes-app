@@ -5,6 +5,7 @@ export const ADD_SECRET = gql`
     addSecret(secret: $secret) {
       id
       secret
+      password
     }
   }
 `;
@@ -14,6 +15,7 @@ export const DELETE_SECRET = gql`
     deleteSecret(id: $id) {
       id
       secret
+      password
     }
   }
 `;
