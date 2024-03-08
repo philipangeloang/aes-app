@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { Button } from "./ui/button";
 import { Card, CardDescription, CardFooter, CardHeader } from "./ui/card";
 import {
@@ -14,7 +14,7 @@ import {
 } from "./ui/drawer";
 import { Input } from "./ui/input";
 
-import { GET_SECRETS } from "@/graphql/queries";
+import { GET_SECRET, GET_SECRETS } from "@/graphql/queries";
 import { DELETE_SECRET } from "@/graphql/mutations";
 import { toast } from "./ui/use-toast";
 import { Toaster } from "./ui/toaster";
@@ -34,8 +34,8 @@ import { useState } from "react";
 const Hero = () => {
   const [pass, setPass] = useState("");
   const { data } = useQuery(GET_SECRETS);
+  const [getSecret, { data: singleSecret }] = useLazyQuery(GET_SECRET);
 
-  console.log(pass);
   const [deleteSecret] = useMutation(DELETE_SECRET);
 
   function handleDelete(id: any) {
@@ -54,8 +54,11 @@ const Hero = () => {
     });
   }
 
-  function handleOpen(id: any) {
-    console.log(id);
+  function handleReveal(id: any, password: any) {
+    getSecret({
+      variables: { id: id, password: password },
+    });
+    console.log(singleSecret);
   }
 
   return (
@@ -70,12 +73,7 @@ const Hero = () => {
               <div className="flex gap-5">
                 <Drawer>
                   <DrawerTrigger>
-                    <Button
-                      onClick={() => {
-                        handleOpen(item.id);
-                      }}
-                      className="bg-blue-700 hover:bg-blue-800"
-                    >
+                    <Button className="bg-blue-700 hover:bg-blue-800">
                       Open Secret
                     </Button>
                   </DrawerTrigger>
@@ -91,48 +89,36 @@ const Hero = () => {
                         <Input
                           onChange={(e) => {
                             setPass(e.target.value);
-                            console.log(item);
                           }}
                           placeholder="password"
                           type="password"
                         />
                       </div>
                       <DrawerFooter>
-                        {item.password === pass ? (
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button className="bg-blue-700 hover:bg-blue-800">
-                                Reveal
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle className="text-center">
-                                  {item.secret}
-                                </AlertDialogTitle>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogAction className="bg-blue-700 hover:bg-blue-800">
-                                  Continue
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        ) : (
-                          <Button
-                            className="bg-blue-700 hover:bg-blue-800"
-                            onClick={() => {
-                              toast({
-                                title: "Incorrect Password",
-                                description:
-                                  "Please input the correct password to reveal the secret",
-                                duration: 3000,
-                              });
-                            }}
-                          >
-                            Reveal
-                          </Button>
-                        )}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              onClick={() => {
+                                handleReveal(item.id, pass);
+                              }}
+                              className="bg-blue-700 hover:bg-blue-800"
+                            >
+                              Reveal
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle className="text-center">
+                                {item.secret}
+                              </AlertDialogTitle>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogAction className="bg-blue-700 hover:bg-blue-800">
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </DrawerFooter>
                     </div>
                   </DrawerContent>

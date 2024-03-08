@@ -9,3 +9,13 @@ export const GET_SECRETS = gql`
     }
   }
 `;
+
+export const GET_SECRET = gql`
+  query getSecret($id: ID!, $password: String!) {
+    secret(id: $id, password: $password) {
+      id
+      secret
+      password
+    }
+  }
+`;
