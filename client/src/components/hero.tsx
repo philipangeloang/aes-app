@@ -34,7 +34,7 @@ import { useState } from "react";
 const Hero = () => {
   const [pass, setPass] = useState("");
   const { data } = useQuery(GET_SECRETS);
-  const [getSecret, { data: singleSecret }] = useLazyQuery(GET_SECRET);
+  const [getSecret, { data: fetchedSecret }] = useLazyQuery(GET_SECRET);
 
   const [deleteSecret] = useMutation(DELETE_SECRET);
 
@@ -54,11 +54,16 @@ const Hero = () => {
     });
   }
 
-  function handleReveal(id: any, password: any) {
+  async function handleReveal(id: any, password: any) {
     getSecret({
       variables: { id: id, password: password },
+      onCompleted(data) {
+        if (data) {
+          console.log(data);
+          console.log("COMPLETED");
+        }
+      },
     });
-    console.log(singleSecret);
   }
 
   return (
@@ -113,7 +118,10 @@ const Hero = () => {
                               </AlertDialogTitle>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogAction className="bg-blue-700 hover:bg-blue-800">
+                              <AlertDialogAction
+                                onClick={() => {}}
+                                className="bg-blue-700 hover:bg-blue-800"
+                              >
                                 Continue
                               </AlertDialogAction>
                             </AlertDialogFooter>

@@ -7,7 +7,7 @@ export const typeDefs = `#graphql
     
     type Query {
         secrets: [Secret]
-        secret(id: ID!): Secret
+        secret(id: ID!, password: String!): Secret
         
     }
     type Mutation {
@@ -27,5 +27,4 @@ export const typeDefs = `#graphql
         password: String
     }
 
-   
 `;
