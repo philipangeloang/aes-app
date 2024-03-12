@@ -3,7 +3,7 @@ import { HiplipKeyExpansion } from "./aes/aes_key_expansion/hiplip_key_expansion
 import { HiplipAESEncrypt } from "./aes/aes_encrpyt/hiplip_aes_encrypt";
 import { HiplipAESDecrypt } from "./aes/aes_decrypt/hiplip_aes_decrypt";
 
-function textToHex(text: any) {
+function textToHex(text: string): string {
   let hex = "";
   for (let i = 0; i < text.length; i++) {
     let charCode = text.charCodeAt(i).toString(16);
@@ -12,28 +12,31 @@ function textToHex(text: any) {
   return hex;
 }
 
-function hexToText(hex: any) {
+function hexToText(hex: string): string {
   let text = "";
   for (let i = 0; i < hex.length; i += 2) {
     let byte = parseInt(hex.substr(i, 2), 16);
-    text += String.fromCharCode(byte);
+    if (byte !== 0) {
+      text += String.fromCharCode(byte);
+    }
   }
   return text;
 }
-
 export const resolvers = {
   Query: {
     async secrets(_parent: any, _args: any, context: Context) {
       return await context.prisma.secret.findMany();
     },
     async secret(_parent: any, args: any, context: Context) {
-      const secretInstance = await context.prisma.secret.findFirst({
+      const secretInstance: any = await context.prisma.secret.findFirst({
         where: {
           id: args.id,
         },
       });
 
-      const decrpytedPlainKey = textToHex(secretInstance?.password);
+      const shallowSecretInstance = { ...secretInstance };
+
+      const decrpytedPlainKey = textToHex(shallowSecretInstance?.password);
 
       const argumentHexKey = textToHex(args.password);
       const expandedKey = HiplipKeyExpansion(argumentHexKey, 30);
@@ -44,14 +47,16 @@ export const resolvers = {
 
       if (encryptedArgumentHexKey === decrpytedPlainKey) {
         const expandedKey = HiplipKeyExpansion(argumentHexKey, 30);
-        const pulledSecret = textToHex(secretInstance?.secret);
+        const pulledSecret = textToHex(shallowSecretInstance?.secret);
         const transformedPulledSecret = HiplipAESDecrypt(
           pulledSecret,
           expandedKey
         );
         const decryptedPulledSecret = hexToText(transformedPulledSecret);
-        console.log(decryptedPulledSecret);
-        return secretInstance;
+        shallowSecretInstance.secret = decryptedPulledSecret;
+        console.log(shallowSecretInstance.secret);
+
+        return shallowSecretInstance;
       } else {
         throw new Error("Wrong Password");
       }

@@ -33,7 +33,7 @@ import { useState } from "react";
 
 const Hero = () => {
   const [pass, setPass] = useState("");
-  const { data } = useQuery(GET_SECRETS);
+  const { data } = useQuery(GET_SECRETS); //why is this being affected by getsecret
   const [getSecret, { data: fetchedSecret }] = useLazyQuery(GET_SECRET);
 
   const [deleteSecret] = useMutation(DELETE_SECRET);
@@ -59,11 +59,12 @@ const Hero = () => {
       variables: { id: id, password: password },
       onCompleted(data) {
         if (data) {
-          console.log(data);
           console.log("COMPLETED");
         }
       },
     });
+
+    console.log(data);
   }
 
   return (
