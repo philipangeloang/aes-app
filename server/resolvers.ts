@@ -57,7 +57,6 @@ export const resolvers = {
         );
         const decryptedPulledSecret = hexToText(transformedPulledSecret);
         shallowSecretInstance.secret = decryptedPulledSecret;
-        console.log(shallowSecretInstance.secret);
 
         return shallowSecretInstance;
       } else {
@@ -91,7 +90,6 @@ export const resolvers = {
         );
         const decryptedPulledSecret = hexToText(transformedPulledSecret);
         shallowSecretInstance.secret = decryptedPulledSecret;
-        console.log(shallowSecretInstance.secret);
 
         return shallowSecretInstance;
       } else {

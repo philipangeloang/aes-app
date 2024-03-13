@@ -34,7 +34,7 @@ import { useState } from "react";
 const Hero = () => {
   const [pass, setPass] = useState("");
   const { data } = useQuery(GET_SECRETS); //why is this being affected by getsecret
-  const [getSecret] = useLazyQuery(GET_SECRET);
+  const [getSecret, { data: fetchedSecret }] = useLazyQuery(GET_SECRET);
 
   const [deleteSecret] = useMutation(DELETE_SECRET);
 
@@ -63,8 +63,6 @@ const Hero = () => {
         }
       },
     });
-
-    console.log(data);
   }
 
   return (
@@ -115,7 +113,9 @@ const Hero = () => {
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle className="text-center">
-                                {item.secret}
+                                {fetchedSecret === undefined
+                                  ? "Wrong password"
+                                  : item.secret}
                               </AlertDialogTitle>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

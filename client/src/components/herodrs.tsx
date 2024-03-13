@@ -34,7 +34,7 @@ import { useState } from "react";
 const HeroDRS = () => {
   const [pass, setPass] = useState("");
   const { data } = useQuery(GET_SECRETS_DRS);
-  const [getSecretDRS] = useLazyQuery(GET_SECRET_DRS);
+  const [getSecretDRS, { data: fetchedSecret }] = useLazyQuery(GET_SECRET_DRS);
 
   const [deleteSecretDRS] = useMutation(DELETE_SECRET_DRS);
 
@@ -115,7 +115,9 @@ const HeroDRS = () => {
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle className="text-center">
-                                {item.secret}
+                                {fetchedSecret === undefined
+                                  ? "Wrong password"
+                                  : item.secret}
                               </AlertDialogTitle>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

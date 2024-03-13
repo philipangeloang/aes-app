@@ -131,6 +131,7 @@ const Navbar = () => {
                   <Input
                     id="secret"
                     className="col-span-3"
+                    maxLength={16}
                     defaultValue={""}
                     value={secret}
                     onChange={(e) => {
