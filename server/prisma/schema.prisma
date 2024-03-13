@@ -15,3 +15,9 @@ model Secret {
   secret   String
   password String
 }
+
+model SecretDRS {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  secret   String
+  password String
+}

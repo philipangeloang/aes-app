@@ -16,14 +16,20 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { ADD_SECRET } from "@/graphql/mutations";
 import { GET_SECRETS } from "@/graphql/queries";
+import { ADD_SECRET_DRS } from "@/graphql/mutationsdrs";
+import { GET_SECRETS_DRS } from "@/graphql/queriesdrs";
 import { Toaster } from "./ui/toaster";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const { toast } = useToast();
   const [secret, setSecret] = useState("");
   const [password, setPassword] = useState("");
 
+  const [url, setURL] = useState("/");
+
   const [addSecret] = useMutation(ADD_SECRET);
+  const [addSecretDRS] = useMutation(ADD_SECRET_DRS);
 
   function handleSubmit() {
     if (secret === "" || password === "") {
@@ -33,24 +39,46 @@ const Navbar = () => {
         duration: 3000,
       });
     }
-    addSecret({
-      variables: {
-        secret: {
-          secret: secret,
-          password: password,
+
+    if (url === "/") {
+      addSecret({
+        variables: {
+          secret: {
+            secret: secret,
+            password: password,
+          },
         },
-      },
-      refetchQueries: [{ query: GET_SECRETS }],
-      onCompleted(data) {
-        if (data) {
-          return toast({
-            title: "Added",
-            description: "Successfully added an instance",
-            duration: 3000,
-          });
-        }
-      },
-    });
+        refetchQueries: [{ query: GET_SECRETS }],
+        onCompleted(data) {
+          if (data) {
+            return toast({
+              title: "Added",
+              description: "Successfully added an instance",
+              duration: 3000,
+            });
+          }
+        },
+      });
+    } else {
+      addSecretDRS({
+        variables: {
+          secret: {
+            secret: secret,
+            password: password,
+          },
+        },
+        refetchQueries: [{ query: GET_SECRETS_DRS }],
+        onCompleted(data) {
+          if (data) {
+            return toast({
+              title: "Added",
+              description: "Successfully added an instance",
+              duration: 3000,
+            });
+          }
+        },
+      });
+    }
 
     setSecret("");
     setPassword("");
@@ -69,8 +97,23 @@ const Navbar = () => {
             HAES
           </span>
         </a>
-        <Toaster />
-        <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+        <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse gap-8 items-center">
+          <Link
+            onClick={() => {
+              setURL("/");
+            }}
+            to="/"
+          >
+            HAES
+          </Link>
+          <Link
+            onClick={() => {
+              setURL("drs");
+            }}
+            to="/drs"
+          >
+            DRSAES
+          </Link>
           <Dialog>
             <DialogTrigger asChild>
               <Button className="bg-blue-700 hover:bg-blue-800">+</Button>
@@ -121,6 +164,7 @@ const Navbar = () => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
           <button
             data-collapse-toggle="navbar-cta"
             type="button"
@@ -151,6 +195,7 @@ const Navbar = () => {
           id="navbar-cta"
         ></div>
       </div>
+      <Toaster />
     </nav>
   );
 };

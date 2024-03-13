@@ -14,8 +14,8 @@ import {
 } from "./ui/drawer";
 import { Input } from "./ui/input";
 
-import { GET_SECRET, GET_SECRETS } from "@/graphql/queries";
-import { DELETE_SECRET } from "@/graphql/mutations";
+import { GET_SECRETS_DRS, GET_SECRET_DRS } from "@/graphql/queriesdrs";
+import { DELETE_SECRET_DRS } from "@/graphql/mutationsdrs";
 import { toast } from "./ui/use-toast";
 import { Toaster } from "./ui/toaster";
 import {
@@ -31,17 +31,17 @@ import {
 } from "./ui/alert-dialog";
 import { useState } from "react";
 
-const Hero = () => {
+const HeroDRS = () => {
   const [pass, setPass] = useState("");
-  const { data } = useQuery(GET_SECRETS); //why is this being affected by getsecret
-  const [getSecret] = useLazyQuery(GET_SECRET);
+  const { data } = useQuery(GET_SECRETS_DRS);
+  const [getSecretDRS] = useLazyQuery(GET_SECRET_DRS);
 
-  const [deleteSecret] = useMutation(DELETE_SECRET);
+  const [deleteSecretDRS] = useMutation(DELETE_SECRET_DRS);
 
   function handleDelete(id: any) {
-    deleteSecret({
+    deleteSecretDRS({
       variables: { id: id },
-      refetchQueries: [{ query: GET_SECRETS }],
+      refetchQueries: [{ query: GET_SECRETS_DRS }],
       onCompleted(data) {
         if (data) {
           return toast({
@@ -55,7 +55,7 @@ const Hero = () => {
   }
 
   async function handleReveal(id: any, password: any) {
-    getSecret({
+    getSecretDRS({
       variables: { id: id, password: password },
       onCompleted(data) {
         if (data) {
@@ -70,13 +70,13 @@ const Hero = () => {
   return (
     <section className="bg-white dark:bg-gray-900 pt-20 h-screen">
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto gap-4 lg:py-16 lg:grid-cols-12">
-        {data?.secrets.map((item: any) => (
+        {data?.secretsDRS.map((item: any) => (
           <Card key={item.id} className="col-span-3">
             <CardHeader>
               <CardDescription>{item.secret}</CardDescription>
             </CardHeader>
             <CardFooter>
-              <div className="flex gap-4">
+              <div className="flex gap-5">
                 <Drawer>
                   <DrawerTrigger>
                     <Button className="bg-blue-700 hover:bg-blue-800">
@@ -119,7 +119,10 @@ const Hero = () => {
                               </AlertDialogTitle>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogAction className="bg-blue-700 hover:bg-blue-800">
+                              <AlertDialogAction
+                                onClick={() => {}}
+                                className="bg-blue-700 hover:bg-blue-800"
+                              >
                                 Continue
                               </AlertDialogAction>
                             </AlertDialogFooter>
@@ -169,4 +172,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default HeroDRS;

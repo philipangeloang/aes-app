@@ -1,9 +1,34 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
 import "./index.css";
 
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import Hero from "./components/hero.tsx";
+import Navbar from "./components/navbar.tsx";
+import HeroDRS from "./components/herodrs.tsx";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <div>
+        <Navbar />
+        <Hero />
+      </div>
+    ),
+  },
+  {
+    path: "/drs",
+    element: (
+      <div>
+        <Navbar />
+        <HeroDRS />
+      </div>
+    ),
+  },
+]);
 
 const client = new ApolloClient({
   uri: "http://localhost:4000/",
@@ -13,7 +38,7 @@ const client = new ApolloClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <RouterProvider router={router} />
     </ApolloProvider>
   </React.StrictMode>
 );
