@@ -7,7 +7,7 @@ import { SubBytes } from "./aes_encrypt_methods/sub_bytes";
 import calculateCorrelation from "calculate-correlation";
 
 export function ModifiedAESEncrypt(text, key) {
-  let inputText = text.match(/.{1,2}/g);
+  let inputText = String(text).match(/.{1,2}/g);
   let hexText = [];
 
   // Converting string to hexadecimal | ae -> 0xae

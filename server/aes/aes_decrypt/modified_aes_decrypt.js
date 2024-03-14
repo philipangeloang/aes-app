@@ -5,7 +5,7 @@ import { AddRoundKey } from "./aes_decrypt_methods/add_round_key";
 import { ModifiedModSub } from "./aes_decrypt_methods/modified_mod_sub";
 
 export function ModifiedAESDecrypt(text, key) {
-  let inputText = text.match(/.{1,2}/g);
+  let inputText = String(text).match(/.{1,2}/g);
   let hexText = [];
 
   for (let i = 0; i < inputText.length; i++) {

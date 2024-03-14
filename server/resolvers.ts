@@ -2,6 +2,9 @@ import { Context } from "./context";
 import { HiplipKeyExpansion } from "./aes/aes_key_expansion/hiplip_key_expansion.js";
 import { HiplipAESEncrypt } from "./aes/aes_encrpyt/hiplip_aes_encrypt";
 import { HiplipAESDecrypt } from "./aes/aes_decrypt/hiplip_aes_decrypt";
+import { ModifiedKeyExpansion } from "./aes/aes_key_expansion/modified_aes_key_expansion";
+import { ModifiedAESEncrypt } from "./aes/aes_encrpyt/modified_aes_encrypt";
+import { ModifiedAESDecrypt } from "./aes/aes_decrypt/modified_aes_decrypt";
 
 function textToHex(text: string): string {
   let hex = "";
@@ -75,16 +78,16 @@ export const resolvers = {
       const decrpytedPlainKey = textToHex(shallowSecretInstance?.password);
 
       const argumentHexKey = textToHex(args.password);
-      const expandedKey = HiplipKeyExpansion(argumentHexKey, 30);
-      const encryptedArgumentHexKey = HiplipAESEncrypt(
+      const expandedKey = ModifiedKeyExpansion(argumentHexKey);
+      const encryptedArgumentHexKey = ModifiedAESEncrypt(
         argumentHexKey,
         expandedKey
       );
 
       if (encryptedArgumentHexKey === decrpytedPlainKey) {
-        const expandedKey = HiplipKeyExpansion(argumentHexKey, 30);
+        const expandedKey = ModifiedKeyExpansion(argumentHexKey);
         const pulledSecret = textToHex(shallowSecretInstance?.secret);
-        const transformedPulledSecret = HiplipAESDecrypt(
+        const transformedPulledSecret = ModifiedAESDecrypt(
           pulledSecret,
           expandedKey
         );
@@ -123,14 +126,14 @@ export const resolvers = {
       // Text to Hex
       const hexSecret = textToHex(args.secret.secret);
       const hexKey = textToHex(args.secret.password);
-      const expandedKey = HiplipKeyExpansion(hexKey, 30);
+      const expandedKey = ModifiedKeyExpansion(hexKey);
 
       // Extra Step to Encrpyt Password too
-      const encryptedHexKey = HiplipAESEncrypt(hexKey, expandedKey);
+      const encryptedHexKey = ModifiedAESEncrypt(hexKey, expandedKey);
       const encryptedPlainKey = hexToText(encryptedHexKey);
 
       //  Encrpyt
-      const encryptedHex = HiplipAESEncrypt(hexSecret, expandedKey);
+      const encryptedHex = ModifiedAESEncrypt(hexSecret, expandedKey);
       const encryptedPlain = hexToText(encryptedHex);
 
       return await context.prisma.secretDRS.create({

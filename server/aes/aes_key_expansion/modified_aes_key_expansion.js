@@ -8,10 +8,8 @@ import { xorState } from "./aes_key_expansion_methods/xor_state";
 import { allKey1, allKey2 } from "../constants";
 
 export function ModifiedKeyExpansion(key) {
-  const start = window.performance.now();
-
   console.log("Input Key: ", key);
-  let inputKey = key.match(/.{1,2}/g); // splitting input key per group of 2
+  let inputKey = String(key).match(/.{1,2}/g); // splitting input key per group of 2
   console.log("8 bit Grouping: ", inputKey);
   let hexKeys = [];
 
@@ -49,9 +47,9 @@ export function ModifiedKeyExpansion(key) {
   }
 
   console.log("All Keys divided per Word: ", expandedKeys);
-  const end = window.performance.now();
-  const elapsedTime = end - start;
-  console.log(`Key Expansion took ${elapsedTime} milliseconds`);
+  // const end = window.performance.now();
+  // const elapsedTime = end - start;
+  // console.log(`Key Expansion took ${elapsedTime} milliseconds`);
 
   /* FOR FREQUENCY TEST */
   console.log("Frequency Test");
