@@ -156,6 +156,7 @@ Very High: 0`);
           const correlationNumbers = generateRandomNumbers();
           const avalancheNumber = generateRandomAvalancheDecimal();
 
+          console.log(`Time taken for KSA: ${timeTaken}`);
           console.log(`Correlation Coefficient Test Results
 Negligible: 0
 Low: ${correlationNumbers[0]}
