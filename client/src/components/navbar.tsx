@@ -20,7 +20,6 @@ import { ADD_SECRET_DRS } from "@/graphql/mutationsdrs";
 import { GET_SECRETS_DRS } from "@/graphql/queriesdrs";
 import { Toaster } from "./ui/toaster";
 import { Link } from "react-router-dom";
-import { time } from "console";
 
 const Navbar = () => {
   const { toast } = useToast();
