@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "https://aes-vault-client.onrender.com/drs",
+    path: "drs",
     element: (
       <div>
         <Navbar />
